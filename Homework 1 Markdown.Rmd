@@ -1,0 +1,100 @@
+---
+title: "Homework 1"
+author: "Mariel Gandarillas Calderon"
+date: "2024-10-08"
+output: html_document
+---
+
+```         
+```
+
+## Homework 1
+
+## 1. Hankel Matrix Construction
+
+1.1. Write a function `hankel_matrix` that computes a Hankel matrix of `dim_mat` rows and columns from a sequence `h_seq`. Use a `for` loop to generate the matrix.
+
+```{r}
+hankel_matrix <- function(dim_mat, h_seq) {
+  required_length <- 2 * dim_mat - 1
+  if (length(h_seq) < required_length) {
+    stop("The length of h_seq must be at least 2 * dim_mat - 1.")
+  }
+  H <- matrix(0, nrow = dim_mat, ncol = dim_mat)
+  for (i in 1:dim_mat) {
+    for (j in 1:dim_mat) {
+      H[i, j] <- h_seq[i + j - 1]
+    }
+  }
+  
+  return(H)
+}
+```
+
+1.2 Modify the `hankel_matrix` function with input validation and informative messages. What is the minimum dimension N of the sequence h? Test cases:
+
+```{r}
+hankel_matrix <- function(dim_mat, h_seq) {
+  if (!is.numeric(dim_mat) || length(dim_mat) != 1 || dim_mat <= 0 || dim_mat != as.integer(dim_mat)) {
+    stop("Error: 'dim_mat' must be a positive integer(not decimals).")
+  }
+ 
+  if (!is.numeric(h_seq) || !is.vector(h_seq)) {
+    stop("Error: 'h_seq' must be a numeric vector.")
+  }
+  
+  required_length <- 2 * dim_mat - 1
+  if (length(h_seq) < required_length) {
+    stop("Error: 'h_seq' must have at least ", required_length, " elements to form a Hankel matrix of dimension ", dim_mat, "x", dim_mat, ".")
+  }
+  
+  # Initialize an empty matrix
+  H <- matrix(0, nrow = dim_mat, ncol = dim_mat)
+
+  for (i in 1:dim_mat) {
+    for (j in 1:dim_mat) {
+      H[i, j] <- h_seq[i + j - 1]
+    }
+  }
+  
+  return(H)
+}
+```
+
+3.  Alternative implementation without `for` loops: Write a function `hankel_matrix_fast` that returns the same Hankel matrix as `hankel_matrix` but avoids using a `for` loop. Notice that for a n×n Hankel matrix and a sequence h, we have the following: for the first row (or column) we have Hi,1=hi,i=1,…,n, for the second row (or column) we have Hi,2=hi,i=2,…,n+1, …, for the nth row (or column) we have Hi,n=hi,i=n,…,2n−1. Based on these observations, propose an alternative implementation using `rep` and `seq` functions, but without using `for` loops. Verify that the output of `hankel_matrix_fast` is the same as `hankel_matrix` by using `all.equal`.
+
+    ```{r}
+    hankel_matrix_fast <- function(dim_mat, h_seq) {
+      # Input validation dim mat
+      if (!is.numeric(dim_mat) || length(dim_mat) != 1 || dim_mat <= 0 || dim_mat != as.integer(dim_mat)) {
+        stop("Error: 'dim_mat' must be a positive integer.")
+      }
+      
+      # Input validation h_seq
+      if (!is.numeric(h_seq) || !is.vector(h_seq)) {
+        stop("Error: 'h_seq' must be a numeric vector.")
+      }
+
+      required_length <- 2 * dim_mat - 1
+      if (length(h_seq) < required_length) {
+        stop(paste("Error: 'h_seq' must have at least", required_length, "elements to form a Hankel matrix of dimension", dim_mat, "x", dim_mat, "."))
+      }
+      
+      # Generate row and column indices with 'rep' 
+      row_indices <- rep(1:dim_mat, times = dim_mat)
+      col_indices <- rep(1:dim_mat, each = dim_mat)
+      
+      indices <- row_indices + col_indices - 1
+      
+      # Create the Hankel matrix 
+      H <- matrix(h_seq[indices], nrow = dim_mat, ncol = dim_mat)
+      
+      return(H)
+    }
+    ```
+
+4.  Benchmarking: Benchmark your two implementations. Use `microbenchmark::microbenchmark({...},{...})` where `...` is to be replaced by your implementations. Comment the results. The vectorized version (`hankel_matrix_fast`) is expected to be faster. Make a graph in order to compare benchmark results with respect to growing dimensions `dim_mat`.
+
+```{r}
+
+```
